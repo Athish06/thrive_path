@@ -1,4 +1,6 @@
-const API_ROOT = 'http://localhost:8000/api/sessions';
+import { API_BASE_URL } from '../config/api';
+
+const API_ROOT = `${API_BASE_URL}/api/sessions`;
 
 interface SessionSummary {
   id: number;

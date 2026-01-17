@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { SessionRescheduleModal } from '../sessions/SessionRescheduleModal';
 import { SessionRescheduleStepperModal } from '../sessions/SessionRescheduleStepperModal';
 import { formatTimeToAMPM } from '../../utils/sessionScheduling';
+import { API_BASE_URL } from '../../config/api';
 
 const sanitizeTime = (time?: string | null) => {
   if (!time) {
@@ -151,7 +152,7 @@ export const TodaysSessions = () => {
         session_activities: sessionActivities
       };
 
-      const response = await fetch('http://localhost:8000/api/sessions', {
+      const response = await fetch(`${API_BASE_URL}/api/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +197,7 @@ export const TodaysSessions = () => {
       const durationMinutes = getSessionDurationMinutes(rescheduleTarget);
       const endTime = deriveEndTimeFromDuration(time, durationMinutes);
 
-      const response = await fetch(`http://localhost:8000/api/sessions/${rescheduleTarget.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${rescheduleTarget.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -443,8 +444,8 @@ export const TodaysSessions = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
               className={`mb-4 flex items-center gap-3 rounded-lg border px-3 py-2 text-sm ${actionFeedback.type === 'success'
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                  : 'bg-rose-50 border-rose-200 text-rose-700'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : 'bg-rose-50 border-rose-200 text-rose-700'
                 }`}
             >
               {actionFeedback.type === 'success' ? (

@@ -5,6 +5,7 @@ import Stepper, { Step } from '../ui/Stepper';
 import { CustomDatePicker } from '../ui/CustomDatePicker';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
+import { API_BASE_URL } from '../../config/api';
 
 interface StudentEnrollmentModalProps {
   isOpen: boolean;
@@ -804,7 +805,7 @@ export const StudentEnrollmentModal: React.FC<StudentEnrollmentModalProps> = ({
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://localhost:8000/api/delete-file`, {
+      const response = await fetch(`${API_BASE_URL}/api/delete-file`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -896,7 +897,7 @@ export const StudentEnrollmentModal: React.FC<StudentEnrollmentModalProps> = ({
         ? (hasClinicalSnapshotScores || hasNonSnapshotScores ? 'active' : 'assessment_due')
         : (hasNonSnapshotScores ? 'active' : 'assessment_due');
 
-      const response = await fetch('http://localhost:8000/api/enroll-student', {
+      const response = await fetch(`${API_BASE_URL}/api/enroll-student`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1182,7 +1183,7 @@ export const StudentEnrollmentModal: React.FC<StudentEnrollmentModalProps> = ({
                               const token = localStorage.getItem('access_token');
                               const form = new FormData();
                               form.append('file', file);
-                              const res = await fetch('http://localhost:8000/api/upload-document?process_ocr=true', {
+                              const res = await fetch(`${API_BASE_URL}/api/upload-document?process_ocr=true`, {
                                 method: 'POST',
                                 headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
                                 body: form
@@ -1235,7 +1236,7 @@ export const StudentEnrollmentModal: React.FC<StudentEnrollmentModalProps> = ({
                                 // Get signed URL for viewing
                                 try {
                                   const token = localStorage.getItem('access_token');
-                                  const response = await fetch('http://localhost:8000/api/view-file', {
+                                  const response = await fetch(`${API_BASE_URL}/api/view-file`, {
                                     method: 'POST',
                                     headers: {
                                       'Authorization': `Bearer ${token}`,

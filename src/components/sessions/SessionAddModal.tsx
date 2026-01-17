@@ -9,6 +9,7 @@ import { ChildGoal } from '../../types';
 import { useTherapistSettings } from '../../hooks/useTherapistSettings';
 import { checkTimeConflicts, TimeConflict, getAvailableTimeSlots, formatTimeToAMPM } from '../../utils/sessionScheduling';
 import { resolveLearnerType } from '../../utils/learnerUtils';
+import { API_BASE_URL } from '../../config/api';
 
 interface BackendSession {
   id: number;
@@ -124,18 +125,16 @@ export const StudentSelectorModal: React.FC<StudentSelectorModalProps> = ({ isOp
                   <button
                     key={student.id}
                     onClick={() => onSelect(student.id.toString())}
-                    className={`w-full p-4 rounded-xl transition-all border-2 text-left ${
-                      isSelected
+                    className={`w-full p-4 rounded-xl transition-all border-2 text-left ${isSelected
                         ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20'
                         : 'border-slate-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 bg-white dark:bg-slate-800'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        isSelected
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${isSelected
                           ? 'bg-violet-600 text-white'
                           : 'bg-gradient-to-br from-blue-100 to-purple-100 dark:from-slate-700 dark:to-slate-600 text-blue-700 dark:text-blue-300'
-                      }`}>
+                        }`}>
                         {initials}
                       </div>
                       <span className="font-medium text-slate-800 dark:text-white">{student.name}</span>
@@ -163,7 +162,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
-  
+
   const [availableChildGoals, setAvailableChildGoals] = useState<ChildGoal[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
   const [showStudentSelector, setShowStudentSelector] = useState(false);
@@ -223,7 +222,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
       setLoadingActivities(true);
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch(`http://localhost:8000/api/students/${sessionData.learnerId}/activities`, {
+        const response = await fetch(`${API_BASE_URL}/api/students/${sessionData.learnerId}/activities`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -271,15 +270,15 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
     setSessionData(prev => {
       const updated: SessionData = field === 'learnerId'
         ? {
-            ...prev,
-            learnerId: value as string,
-            childGoals: [],
-            assessmentTools: [],
-          }
+          ...prev,
+          learnerId: value as string,
+          childGoals: [],
+          assessmentTools: [],
+        }
         : {
-            ...prev,
-            [field]: value,
-          } as SessionData;
+          ...prev,
+          [field]: value,
+        } as SessionData;
 
       if (field === 'date' || field === 'startTime') {
         if (updated.date && updated.startTime) {
@@ -382,7 +381,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
       setCurrentStep(2);
       return false;
     }
-    
+
     // Validate end time is after start time
     if (sessionData.startTime && sessionData.endTime && sessionData.endTime <= sessionData.startTime) {
       setFormError('End time must be after start time.');
@@ -447,7 +446,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
 
   const calculateFreeSlots = () => {
     if (!sessionData.date) return;
-    
+
     const slots = getAvailableTimeSlots(
       sessionData.date,
       workingHours,
@@ -474,8 +473,8 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-  className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-  onClick={handleModalClose}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        onClick={handleModalClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -633,7 +632,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
                         />
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-4 text-center">
                         End Time
@@ -666,53 +665,48 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`p-4 rounded-xl border ${
-                        timeConflict.severity === 'error'
+                      className={`p-4 rounded-xl border ${timeConflict.severity === 'error'
                           ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
                           : timeConflict.severity === 'warning'
-                          ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
-                          : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                      }`}
+                            ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+                            : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                        }`}
                     >
                       <div className="flex items-start gap-3">
                         {timeConflict.severity === 'error' ? (
-                          <X className={`h-5 w-5 mt-0.5 ${
-                            timeConflict.severity === 'error'
+                          <X className={`h-5 w-5 mt-0.5 ${timeConflict.severity === 'error'
                               ? 'text-red-600 dark:text-red-400'
                               : timeConflict.severity === 'warning'
-                              ? 'text-amber-600 dark:text-amber-400'
-                              : 'text-blue-600 dark:text-blue-400'
-                          }`} />
+                                ? 'text-amber-600 dark:text-amber-400'
+                                : 'text-blue-600 dark:text-blue-400'
+                            }`} />
                         ) : timeConflict.severity === 'warning' ? (
-                          <AlertTriangle className={`h-5 w-5 mt-0.5 ${
-                            timeConflict.severity === 'warning'
+                          <AlertTriangle className={`h-5 w-5 mt-0.5 ${timeConflict.severity === 'warning'
                               ? 'text-amber-600 dark:text-amber-400'
                               : 'text-blue-600 dark:text-blue-400'
-                          }`} />
+                            }`} />
                         ) : (
                           <Info className="h-5 w-5 mt-0.5 text-blue-600 dark:text-blue-400" />
                         )}
                         <div className="flex-1">
-                          <p className={`text-sm font-medium ${
-                            timeConflict.severity === 'error'
+                          <p className={`text-sm font-medium ${timeConflict.severity === 'error'
                               ? 'text-red-800 dark:text-red-200'
                               : timeConflict.severity === 'warning'
-                              ? 'text-amber-800 dark:text-amber-200'
-                              : 'text-blue-800 dark:text-blue-200'
-                          }`}>
+                                ? 'text-amber-800 dark:text-amber-200'
+                                : 'text-blue-800 dark:text-blue-200'
+                            }`}>
                             {timeConflict.type === 'session-conflict'
                               ? 'Session Time Conflict'
                               : timeConflict.type === 'non-working-hours'
-                              ? 'Outside Working Hours'
-                              : 'Free Time Conflict'}
+                                ? 'Outside Working Hours'
+                                : 'Free Time Conflict'}
                           </p>
-                          <p className={`text-sm mt-1 ${
-                            timeConflict.severity === 'error'
+                          <p className={`text-sm mt-1 ${timeConflict.severity === 'error'
                               ? 'text-red-700 dark:text-red-300'
                               : timeConflict.severity === 'warning'
-                              ? 'text-amber-700 dark:text-amber-300'
-                              : 'text-blue-700 dark:text-blue-300'
-                          }`}>
+                                ? 'text-amber-700 dark:text-amber-300'
+                                : 'text-blue-700 dark:text-blue-300'
+                            }`}>
                             {timeConflict.message}
                           </p>
                         </div>
@@ -757,20 +751,18 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
                             <button
                               key={option.id}
                               onClick={() => toggleAssessmentTool(option.id)}
-                              className={`p-4 rounded-xl transition-all border-2 text-left ${
-                                selected
+                              className={`p-4 rounded-xl transition-all border-2 text-left ${selected
                                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                                   : 'border-slate-200 dark:border-slate-700 hover:border-purple-300 dark:hover:border-purple-600 bg-white dark:bg-slate-800'
-                              }`}
+                                }`}
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2">
-                                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold ${
-                                      selected
+                                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold ${selected
                                         ? 'bg-purple-600 text-white'
                                         : 'bg-gradient-to-br from-purple-100 to-violet-100 dark:from-slate-700 dark:to-slate-600 text-purple-700 dark:text-purple-300'
-                                    }`}>
+                                      }`}>
                                       {option.name[0]}
                                     </span>
                                     <span className="font-medium text-slate-800 dark:text-white">
@@ -832,19 +824,17 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
                             <button
                               key={childGoal.id}
                               onClick={() => toggleChildGoal(childGoal.id)}
-                              className={`p-4 rounded-xl transition-all border-2 text-left ${
-                                sessionData.childGoals.includes(childGoal.id)
+                              className={`p-4 rounded-xl transition-all border-2 text-left ${sessionData.childGoals.includes(childGoal.id)
                                   ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                   : 'border-slate-200 dark:border-slate-700 hover:border-green-300 dark:hover:border-green-600 bg-white dark:bg-slate-800'
-                              }`}
+                                }`}
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                    sessionData.childGoals.includes(childGoal.id)
+                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${sessionData.childGoals.includes(childGoal.id)
                                       ? 'bg-green-600 text-white'
                                       : 'bg-gradient-to-br from-green-100 to-emerald-100 dark:from-slate-700 dark:to-slate-600 text-green-700 dark:text-green-300'
-                                  }`}>
+                                    }`}>
                                     <BookOpen className="h-4 w-4" />
                                   </div>
                                   <div>
@@ -967,7 +957,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
           </div>
         </motion.div>
       </motion.div>
-      
+
       {/* Conflict Confirmation Dialog */}
       <AnimatePresence>
         {showConflictDialog && (
@@ -988,17 +978,15 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
             >
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    timeConflict.severity === 'warning'
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${timeConflict.severity === 'warning'
                       ? 'bg-amber-100 dark:bg-amber-900/50'
                       : 'bg-blue-100 dark:bg-blue-900/50'
-                  }`}>
+                    }`}>
                     {timeConflict.severity === 'warning' ? (
-                      <AlertTriangle className={`h-6 w-6 ${
-                        timeConflict.severity === 'warning'
+                      <AlertTriangle className={`h-6 w-6 ${timeConflict.severity === 'warning'
                           ? 'text-amber-600 dark:text-amber-400'
                           : 'text-blue-600 dark:text-blue-400'
-                      }`} />
+                        }`} />
                     ) : (
                       <Info className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     )}
@@ -1026,11 +1014,10 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
                   </button>
                   <button
                     onClick={handleConflictConfirm}
-                    className={`flex-1 px-4 py-3 text-white rounded-xl transition-colors font-medium ${
-                      timeConflict.severity === 'warning'
+                    className={`flex-1 px-4 py-3 text-white rounded-xl transition-colors font-medium ${timeConflict.severity === 'warning'
                         ? 'bg-amber-600 hover:bg-amber-700'
                         : 'bg-blue-600 hover:bg-blue-700'
-                    }`}
+                      }`}
                   >
                     Continue Anyway
                   </button>
@@ -1040,7 +1027,7 @@ export const SessionAddModal: React.FC<SessionAddModalProps> = ({ open, onClose,
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       {/* Student Selector Popup */}
       <StudentSelectorModal
         isOpen={showStudentSelector}

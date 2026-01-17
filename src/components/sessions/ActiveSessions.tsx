@@ -21,6 +21,7 @@ import { formatDateForDisplay, formatTimeForDisplay } from '../../utils/dateUtil
 import { SessionActivitiesModal } from './SessionActivitiesModal';
 import { SingleActivityAssessmentModal } from './SingleActivityAssessmentModal';
 import { isAssessmentSession } from '../../utils/assessmentApi';
+import { API_BASE_URL } from '../../config/api';
 
 interface TherapistNotesModalProps {
   isOpen: boolean;
@@ -326,7 +327,7 @@ const ActiveSessions: React.FC = () => {
 
         // Update children table with assessment_details
         const updateResponse = await fetch(
-          `http://localhost:8000/api/students/${sessionToComplete.child_id}/assessment-details`,
+          `${API_BASE_URL}/api/students/${sessionToComplete.child_id}/assessment-details`,
           {
             method: 'PUT',
             headers: {
@@ -714,7 +715,7 @@ const ActiveSessionDetailView: React.FC<ActiveSessionDetailViewProps> = ({
         throw new Error('Missing access token. Please log in again.');
       }
 
-      const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/activities`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/activities`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -817,7 +818,7 @@ const ActiveSessionDetailView: React.FC<ActiveSessionDetailViewProps> = ({
 
       // Update the session activity with actual duration
       const updateResponse = await fetch(
-        `http://localhost:8000/api/sessions/${session.id}/activities/${activity.id}`,
+        `${API_BASE_URL}/api/sessions/${session.id}/activities/${activity.id}`,
         {
           method: 'PUT',
           headers: {
@@ -837,7 +838,7 @@ const ActiveSessionDetailView: React.FC<ActiveSessionDetailViewProps> = ({
 
       // Mark the goal as completed in child_goals table
       const completeResponse = await fetch(
-        `http://localhost:8000/api/students/${session.child_id}/activities/${activityId}/complete`,
+        `${API_BASE_URL}/api/students/${session.child_id}/activities/${activityId}/complete`,
         {
           method: 'POST',
           headers: {
@@ -872,7 +873,7 @@ const ActiveSessionDetailView: React.FC<ActiveSessionDetailViewProps> = ({
 
         try {
           const completeSessionResponse = await fetch(
-            `http://localhost:8000/api/sessions/${session.id}/complete`,
+            `${API_BASE_URL}/api/sessions/${session.id}/complete`,
             {
               method: 'POST',
               headers: {
@@ -939,7 +940,7 @@ const ActiveSessionDetailView: React.FC<ActiveSessionDetailViewProps> = ({
 
       // Update the session activity with performance notes
       const updateResponse = await fetch(
-        `http://localhost:8000/api/sessions/${session.id}/activities/${selectedActivityForNotes.id}`,
+        `${API_BASE_URL}/api/sessions/${session.id}/activities/${selectedActivityForNotes.id}`,
         {
           method: 'PUT',
           headers: {

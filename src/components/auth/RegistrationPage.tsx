@@ -7,6 +7,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { FaceAvatar, faceAvatarStyles } from './FaceAvatar';
+import { API_BASE_URL } from '../../config/api';
 
 export const RegistrationPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -44,24 +45,24 @@ export const RegistrationPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.agreeToTerms || !formData.privacyConsent) return;
-    
+
     // Password validation
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match');
       return;
     }
-    
+
     if (formData.password.length < 8) {
       setPasswordError('Password must be at least 8 characters long');
       return;
     }
-    
+
     setPasswordError('');
     setIsLoading(true);
-    
+
     try {
       // Send registration data to backend API
-      const response = await fetch('http://localhost:8000/api/register', {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,14 +86,14 @@ export const RegistrationPage: React.FC = () => {
 
       const userData = await response.json();
       console.log('User registered successfully:', userData);
-      
+
       // Navigate to login page with success notification
-      navigate('/login', { 
-        state: { 
-          registrationSuccess: true, 
+      navigate('/login', {
+        state: {
+          registrationSuccess: true,
           message: 'Account created successfully! Please log in with your credentials.',
-          email: formData.email 
-        } 
+          email: formData.email
+        }
       });
     } catch (error) {
       console.error('Registration failed:', error);
@@ -160,11 +161,10 @@ export const RegistrationPage: React.FC = () => {
                       <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Joining as</p>
                       <div className="grid gap-3 sm:grid-cols-2">
                         <label
-                          className={`flex cursor-pointer flex-col gap-2 rounded-2xl border px-4 py-4 transition ${
-                            formData.role === 'parent'
-                              ? 'border-slate-900 bg-slate-900/6 shadow-sm'
-                              : 'border-slate-200 bg-white/85 hover:border-slate-400'
-                          }`}
+                          className={`flex cursor-pointer flex-col gap-2 rounded-2xl border px-4 py-4 transition ${formData.role === 'parent'
+                            ? 'border-slate-900 bg-slate-900/6 shadow-sm'
+                            : 'border-slate-200 bg-white/85 hover:border-slate-400'
+                            }`}
                         >
                           <input
                             type="radio"
@@ -182,11 +182,10 @@ export const RegistrationPage: React.FC = () => {
                           </span>
                         </label>
                         <label
-                          className={`flex cursor-pointer flex-col gap-2 rounded-2xl border px-4 py-4 transition ${
-                            formData.role === 'therapist'
-                              ? 'border-slate-900 bg-slate-900/6 shadow-sm'
-                              : 'border-slate-200 bg-white/85 hover:border-slate-400'
-                          }`}
+                          className={`flex cursor-pointer flex-col gap-2 rounded-2xl border px-4 py-4 transition ${formData.role === 'therapist'
+                            ? 'border-slate-900 bg-slate-900/6 shadow-sm'
+                            : 'border-slate-200 bg-white/85 hover:border-slate-400'
+                            }`}
                         >
                           <input
                             type="radio"

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { statusDisplayLabel } from '../../utils/sessionUtils';
+import { API_BASE_URL } from '../../config/api';
 
 interface SessionActivity {
   id: number;
@@ -188,7 +189,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
         throw new Error('Missing access token. Please log in again.');
       }
 
-      const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/activities`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/activities`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -215,7 +216,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
         throw new Error('Missing access token. Please log in again.');
       }
 
-      const response = await fetch(`http://localhost:8000/api/students/${session.child_id}/activities`, {
+      const response = await fetch(`${API_BASE_URL}/api/students/${session.child_id}/activities`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -350,7 +351,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           throw new Error('Missing access token. Please log in again.');
         }
 
-        const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/activities`, {
+        const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/activities`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -389,7 +390,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           throw new Error('Missing access token. Please log in again.');
         }
 
-        const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/activities/${activityId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/activities/${activityId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`
@@ -451,7 +452,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
       const learnerProfile = buildLearnerProfile();
       setIsInitializingAi(true);
 
-      const response = await fetch('http://localhost:8000/api/activities/chat/session', {
+      const response = await fetch(`${API_BASE_URL}/api/activities/chat/session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -566,7 +567,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           }
           : undefined;
 
-        const response = await fetch(`http://localhost:8000/api/activities/chat/session/${activeSessionId}/message`, {
+        const response = await fetch(`${API_BASE_URL}/api/activities/chat/session/${activeSessionId}/message`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -623,7 +624,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           throw new Error('Missing access token. Please log in again.');
         }
 
-        const response = await fetch('http://localhost:8000/api/activities/assign', {
+        const response = await fetch(`${API_BASE_URL}/api/activities/assign`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -685,7 +686,7 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           throw new Error('Missing access token. Please log in again.');
         }
 
-        const response = await fetch('http://localhost:8000/api/activities/assign', {
+        const response = await fetch(`${API_BASE_URL}/api/activities/assign`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1595,6 +1596,113 @@ export const SessionActivitiesModal: React.FC<SessionActivitiesModalProps> = ({ 
           </div>
         </motion.div>
       </motion.div>
+      {/* Add Custom Activity Modal */}
+      <AnimatePresence>
+        {showAddCustomActivity && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setShowAddCustomActivity(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-slate-900"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200 p-6 dark:border-slate-800">
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-white">
+                  Add Custom Activity
+                </h3>
+                <button
+                  onClick={() => setShowAddCustomActivity(false)}
+                  className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Activity Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                    placeholder="e.g., Sensory Bin Exploration"
+                    value={customActivityForm.name}
+                    onChange={(e) => setCustomActivityForm(prev => ({ ...prev, name: e.target.value }))}
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Description & Instructions
+                  </label>
+                  <textarea
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white min-h-[100px]"
+                    placeholder="Describe the activity and steps..."
+                    value={customActivityForm.description}
+                    onChange={(e) => setCustomActivityForm(prev => ({ ...prev, description: e.target.value }))}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                      Difficulty
+                    </label>
+                    <select
+                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      value={customActivityForm.difficulty}
+                      onChange={(e) => setCustomActivityForm(prev => ({ ...prev, difficulty: e.target.value }))}
+                    >
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                      Duration (min)
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      value={customActivityForm.duration}
+                      onChange={(e) => setCustomActivityForm(prev => ({ ...prev, duration: Number(e.target.value) }))}
+                      min={5}
+                      max={180}
+                      step={5}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50">
+                <button
+                  onClick={() => setShowAddCustomActivity(false)}
+                  className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => void handleAddCustomActivity()}
+                  disabled={!customActivityForm.name.trim()}
+                  className="rounded-xl bg-violet-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add Activity
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 
@@ -1816,113 +1924,7 @@ const ManageActivitiesInline: React.FC<ManageActivitiesInlineProps> = ({
         )}
 
 
-        {/* Add Custom Activity Modal */}
-        <AnimatePresence>
-          {showAddCustomActivity && (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={() => setShowAddCustomActivity(false)}
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-slate-900"
-              >
-                <div className="flex items-center justify-between border-b border-slate-200 p-6 dark:border-slate-800">
-                  <h3 className="text-xl font-semibold text-slate-800 dark:text-white">
-                    Add Custom Activity
-                  </h3>
-                  <button
-                    onClick={() => setShowAddCustomActivity(false)}
-                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
 
-                <div className="p-6 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Activity Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                      placeholder="e.g., Sensory Bin Exploration"
-                      value={customActivityForm.name}
-                      onChange={(e) => setCustomActivityForm(prev => ({ ...prev, name: e.target.value }))}
-                      autoFocus
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Description & Instructions
-                    </label>
-                    <textarea
-                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white min-h-[100px]"
-                      placeholder="Describe the activity and steps..."
-                      value={customActivityForm.description}
-                      onChange={(e) => setCustomActivityForm(prev => ({ ...prev, description: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                        Difficulty
-                      </label>
-                      <select
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        value={customActivityForm.difficulty}
-                        onChange={(e) => setCustomActivityForm(prev => ({ ...prev, difficulty: e.target.value }))}
-                      >
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                        Duration (min)
-                      </label>
-                      <input
-                        type="number"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        value={customActivityForm.duration}
-                        onChange={(e) => setCustomActivityForm(prev => ({ ...prev, duration: Number(e.target.value) }))}
-                        min={5}
-                        max={180}
-                        step={5}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50">
-                  <button
-                    onClick={() => setShowAddCustomActivity(false)}
-                    className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => void handleAddCustomActivity()}
-                    disabled={!customActivityForm.name.trim()}
-                    className="rounded-xl bg-violet-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Add Activity
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );

@@ -46,6 +46,7 @@ import {
   statusDisplayLabel
 } from '../../utils/sessionUtils';
 import { FilterDropdown, FilterOption } from '../shared/FilterDropdown';
+import { API_BASE_URL } from '../../config/api';
 
 interface Session {
   id: number;
@@ -205,7 +206,7 @@ export const SessionsList: React.FC = () => {
         session_activities: sessionActivities
       };
 
-      const response = await fetch('http://localhost:8000/api/sessions', {
+      const response = await fetch(`${API_BASE_URL}/api/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -302,7 +303,7 @@ export const SessionsList: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/api/sessions/${rescheduleTarget.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${rescheduleTarget.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -563,7 +564,7 @@ export const SessionsList: React.FC = () => {
     setIsUpdatingSessionId(session.id);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,4 +1,6 @@
-const API_ROOT = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../config/api';
+
+const API_ROOT = `${API_BASE_URL}/api`;
 
 interface ApiErrorResponse {
   detail?: string;

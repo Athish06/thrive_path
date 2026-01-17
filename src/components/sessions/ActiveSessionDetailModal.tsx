@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, Target, ClipboardList, AlertTriangle, RefreshCw, CheckCircle } from 'lucide-react';
 import { formatDateForDisplay, formatTimeForDisplay } from '../../utils/dateUtils';
 import { getSessionDurationMinutes, statusDisplayLabel } from '../../utils/sessionUtils';
+import { API_BASE_URL } from '../../config/api';
 
 interface SessionActivity {
   id: number;
@@ -62,7 +63,7 @@ export const ActiveSessionDetailModal: React.FC<ActiveSessionDetailModalProps> =
           throw new Error('Missing access token. Please log in again.');
         }
 
-        const response = await fetch(`http://localhost:8000/api/sessions/${session.id}/activities`, {
+        const response = await fetch(`${API_BASE_URL}/api/sessions/${session.id}/activities`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 

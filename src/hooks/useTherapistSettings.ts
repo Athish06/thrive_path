@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 interface WorkingHours {
   day: string;
@@ -63,7 +64,7 @@ export const useTherapistSettings = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:8000/api/settings', {
+        const response = await fetch(`${API_BASE_URL}/api/settings`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -96,7 +97,7 @@ export const useTherapistSettings = () => {
       try {
         const token = localStorage.getItem('access_token');
         if (token) {
-          const response = await fetch('http://localhost:8000/api/settings', {
+          const response = await fetch(`${API_BASE_URL}/api/settings`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,

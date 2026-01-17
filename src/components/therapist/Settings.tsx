@@ -28,6 +28,7 @@ import {
   MapPin
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { API_BASE_URL } from '../../config/api';
 
 interface WorkingHours {
   day: string;
@@ -115,7 +116,7 @@ const Settings: React.FC = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:8000/api/settings', {
+        const response = await fetch(`${API_BASE_URL}/api/settings`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -125,7 +126,7 @@ const Settings: React.FC = () => {
 
         if (response.ok) {
           const settingsData = await response.json();
-          
+
           // Update profile state with loaded data
           if (settingsData.profile_section) {
             setProfile(prev => ({
@@ -133,7 +134,7 @@ const Settings: React.FC = () => {
               ...settingsData.profile_section
             }));
           }
-          
+
           if (settingsData.account_section) {
             setProfile(prev => ({
               ...prev,
@@ -214,7 +215,7 @@ const Settings: React.FC = () => {
           education: profile.education
         };
 
-        const response = await fetch('http://localhost:8000/api/settings/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/settings/profile`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -242,7 +243,7 @@ const Settings: React.FC = () => {
           dataSharing: profile.dataSharing
         };
 
-        const response = await fetch('http://localhost:8000/api/settings/account', {
+        const response = await fetch(`${API_BASE_URL}/api/settings/account`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -398,460 +399,460 @@ const Settings: React.FC = () => {
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Profile
-              </TabsTrigger>
-              <TabsTrigger value="account" className="flex items-center gap-2">
-                <SettingsIcon className="h-4 w-4" />
-                Account
-              </TabsTrigger>
-            </TabsList>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="profile" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Profile
+                </TabsTrigger>
+                <TabsTrigger value="account" className="flex items-center gap-2">
+                  <SettingsIcon className="h-4 w-4" />
+                  Account
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Profile Tab */}
-            <TabsContent value="profile" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Profile Picture Card */}
-                <Card className="lg:col-span-1">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Camera className="h-5 w-5" />
-                      Profile Picture
-                    </CardTitle>
-                    <CardDescription>
-                      Upload a professional photo
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-col items-center space-y-4">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={profile.avatar} alt="Profile" />
-                        <AvatarFallback className="text-lg">
-                          {profile.firstName?.[0]}{profile.lastName?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <Button variant="outline" size="sm">
-                        <Camera className="h-4 w-4 mr-2" />
-                        Change Photo
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+              {/* Profile Tab */}
+              <TabsContent value="profile" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Profile Picture Card */}
+                  <Card className="lg:col-span-1">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Camera className="h-5 w-5" />
+                        Profile Picture
+                      </CardTitle>
+                      <CardDescription>
+                        Upload a professional photo
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-col items-center space-y-4">
+                        <Avatar className="h-24 w-24">
+                          <AvatarImage src={profile.avatar} alt="Profile" />
+                          <AvatarFallback className="text-lg">
+                            {profile.firstName?.[0]}{profile.lastName?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <Button variant="outline" size="sm">
+                          <Camera className="h-4 w-4 mr-2" />
+                          Change Photo
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                {/* Personal Information */}
-                <Card className="lg:col-span-2">
+                  {/* Personal Information */}
+                  <Card className="lg:col-span-2">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <User className="h-5 w-5" />
+                        Personal Information
+                      </CardTitle>
+                      <CardDescription>
+                        Update your personal details
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input
+                            id="firstName"
+                            value={profile.firstName}
+                            onChange={(e) => updateProfile('firstName', e.target.value)}
+                            placeholder="Enter your first name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            value={profile.lastName}
+                            onChange={(e) => updateProfile('lastName', e.target.value)}
+                            placeholder="Enter your last name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={profile.email}
+                            onChange={(e) => updateProfile('email', e.target.value)}
+                            placeholder="Enter your email"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone</Label>
+                          <Input
+                            id="phone"
+                            value={profile.phone}
+                            onChange={(e) => updateProfile('phone', e.target.value)}
+                            placeholder="Enter your phone number"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                          <CustomDatePicker
+                            value={profile.dateOfBirth}
+                            onChange={(date) => updateProfile('dateOfBirth', date)}
+                            placeholder="Select your date of birth"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label htmlFor="bio">Bio</Label>
+                          <Textarea
+                            id="bio"
+                            value={profile.bio}
+                            onChange={(e) => updateProfile('bio', e.target.value)}
+                            placeholder="Tell us about yourself..."
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Professional Information */}
+                <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      Personal Information
-                    </CardTitle>
+                    <CardTitle>Professional Information</CardTitle>
                     <CardDescription>
-                      Update your personal details
+                      Your professional credentials and experience
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="specialization">Specialization</Label>
+                        <Select value={profile.specialization} onValueChange={(value) => updateProfile('specialization', value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your specialization" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SPECIALIZATIONS.map(spec => (
+                              <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="yearsOfExperience">Years of Experience</Label>
                         <Input
-                          id="firstName"
-                          value={profile.firstName}
-                          onChange={(e) => updateProfile('firstName', e.target.value)}
-                          placeholder="Enter your first name"
+                          id="yearsOfExperience"
+                          value={profile.yearsOfExperience}
+                          onChange={(e) => updateProfile('yearsOfExperience', e.target.value)}
+                          placeholder="e.g., 5"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="licenseNumber">License Number</Label>
                         <Input
-                          id="lastName"
-                          value={profile.lastName}
-                          onChange={(e) => updateProfile('lastName', e.target.value)}
-                          placeholder="Enter your last name"
+                          id="licenseNumber"
+                          value={profile.licenseNumber}
+                          onChange={(e) => updateProfile('licenseNumber', e.target.value)}
+                          placeholder="Enter your license number"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="education">Education</Label>
                         <Input
-                          id="email"
-                          type="email"
-                          value={profile.email}
-                          onChange={(e) => updateProfile('email', e.target.value)}
-                          placeholder="Enter your email"
+                          id="education"
+                          value={profile.education}
+                          onChange={(e) => updateProfile('education', e.target.value)}
+                          placeholder="e.g., Master's in Speech Therapy"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={profile.phone}
-                          onChange={(e) => updateProfile('phone', e.target.value)}
-                          placeholder="Enter your phone number"
-                        />
+                    </div>
+
+                    {/* Certifications */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label>Certifications</Label>
+                        <Button type="button" variant="outline" size="sm" onClick={addCertification}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Certification
+                        </Button>
                       </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                        <CustomDatePicker
-                          value={profile.dateOfBirth}
-                          onChange={(date) => updateProfile('dateOfBirth', date)}
-                          placeholder="Select your date of birth"
-                        />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                          id="bio"
-                          value={profile.bio}
-                          onChange={(e) => updateProfile('bio', e.target.value)}
-                          placeholder="Tell us about yourself..."
-                          rows={3}
-                        />
-                      </div>
+                      {profile.certifications.map((cert, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input
+                            value={cert}
+                            onChange={(e) => updateCertification(index, e.target.value)}
+                            placeholder="Enter certification"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeCertification(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-              </div>
+              </TabsContent>
 
-              {/* Professional Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Professional Information</CardTitle>
-                  <CardDescription>
-                    Your professional credentials and experience
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="specialization">Specialization</Label>
-                      <Select value={profile.specialization} onValueChange={(value) => updateProfile('specialization', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your specialization" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SPECIALIZATIONS.map(spec => (
-                            <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="yearsOfExperience">Years of Experience</Label>
-                      <Input
-                        id="yearsOfExperience"
-                        value={profile.yearsOfExperience}
-                        onChange={(e) => updateProfile('yearsOfExperience', e.target.value)}
-                        placeholder="e.g., 5"
+              {/* Account Tab */}
+              <TabsContent value="account" className="space-y-6">
+                {/* Working Hours */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      Working Hours
+                    </CardTitle>
+                    <CardDescription>
+                      Set your regular working hours for each day
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Weekend Toggle */}
+                    <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50/50 dark:bg-slate-800/50">
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Weekend Availability</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Enable working hours for Saturday and Sunday
+                        </p>
+                      </div>
+                      <Switch
+                        checked={profile.workingHours.filter(h => ['Saturday', 'Sunday'].includes(h.day)).some(h => h.enabled)}
+                        onCheckedChange={(checked) => {
+                          setProfile(prev => ({
+                            ...prev,
+                            workingHours: prev.workingHours.map(hour =>
+                              ['Saturday', 'Sunday'].includes(hour.day)
+                                ? { ...hour, enabled: checked }
+                                : hour
+                            )
+                          }));
+                        }}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="licenseNumber">License Number</Label>
-                      <Input
-                        id="licenseNumber"
-                        value={profile.licenseNumber}
-                        onChange={(e) => updateProfile('licenseNumber', e.target.value)}
-                        placeholder="Enter your license number"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="education">Education</Label>
-                      <Input
-                        id="education"
-                        value={profile.education}
-                        onChange={(e) => updateProfile('education', e.target.value)}
-                        placeholder="e.g., Master's in Speech Therapy"
-                      />
-                    </div>
-                  </div>
 
-                  {/* Certifications */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label>Certifications</Label>
-                      <Button type="button" variant="outline" size="sm" onClick={addCertification}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Certification
-                      </Button>
-                    </div>
-                    {profile.certifications.map((cert, index) => (
-                      <div key={index} className="flex gap-2">
+                    {/* Individual Day Toggles */}
+                    {profile.workingHours
+                      .filter(hours => {
+                        const isWeekendDay = ['Saturday', 'Sunday'].includes(hours.day);
+                        const weekendEnabled = profile.workingHours.filter(h => ['Saturday', 'Sunday'].includes(h.day)).some(h => h.enabled);
+                        return !isWeekendDay || weekendEnabled;
+                      })
+                      .map((hours) => (
+                        <div key={hours.day} className="flex items-center gap-4 p-4 border rounded-lg">
+                          <div className="w-24">
+                            <Label className="text-sm font-medium">{hours.day}</Label>
+                          </div>
+                          <Switch
+                            checked={hours.enabled}
+                            onCheckedChange={(checked) => updateWorkingHours(hours.day, 'enabled', checked)}
+                          />
+                          {hours.enabled && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <Label className="text-sm">Start:</Label>
+                                <Input
+                                  type="time"
+                                  value={hours.startTime}
+                                  onChange={(e) => updateWorkingHours(hours.day, 'startTime', e.target.value)}
+                                  className="w-32"
+                                />
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Label className="text-sm">End:</Label>
+                                <Input
+                                  type="time"
+                                  value={hours.endTime}
+                                  onChange={(e) => updateWorkingHours(hours.day, 'endTime', e.target.value)}
+                                  className="w-32"
+                                />
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                  </CardContent>
+                </Card>
+
+                {/* Free Hours */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Free Hours
+                    </CardTitle>
+                    <CardDescription>
+                      Set specific times when you're available for consultations or meetings
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Button onClick={addFreeHour} variant="outline">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Free Hour
+                    </Button>
+
+                    {profile.freeHours.map((hours) => (
+                      <div key={hours.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                        <Select value={hours.day} onValueChange={(value) => updateFreeHour(hours.id, 'day', value)}>
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DAYS_OF_WEEK.map(day => (
+                              <SelectItem key={day} value={day}>{day}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex items-center gap-2">
+                          <Label className="text-sm">Start:</Label>
+                          <Input
+                            type="time"
+                            value={hours.startTime}
+                            onChange={(e) => updateFreeHour(hours.id, 'startTime', e.target.value)}
+                            className="w-32"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Label className="text-sm">End:</Label>
+                          <Input
+                            type="time"
+                            value={hours.endTime}
+                            onChange={(e) => updateFreeHour(hours.id, 'endTime', e.target.value)}
+                            className="w-32"
+                          />
+                        </div>
+
                         <Input
-                          value={cert}
-                          onChange={(e) => updateCertification(index, e.target.value)}
-                          placeholder="Enter certification"
+                          value={hours.purpose}
+                          onChange={(e) => updateFreeHour(hours.id, 'purpose', e.target.value)}
+                          placeholder="Purpose (e.g., Consultation)"
+                          className="flex-1"
                         />
+
                         <Button
-                          type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => removeCertification(index)}
+                          onClick={() => removeFreeHour(hours.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </CardContent>
+                </Card>
 
-            {/* Account Tab */}
-            <TabsContent value="account" className="space-y-6">
-              {/* Working Hours */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Working Hours
-                  </CardTitle>
-                  <CardDescription>
-                    Set your regular working hours for each day
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Weekend Toggle */}
-                  <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50/50 dark:bg-slate-800/50">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium">Weekend Availability</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Enable working hours for Saturday and Sunday
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.workingHours.filter(h => ['Saturday', 'Sunday'].includes(h.day)).some(h => h.enabled)}
-                      onCheckedChange={(checked) => {
-                        setProfile(prev => ({
-                          ...prev,
-                          workingHours: prev.workingHours.map(hour =>
-                            ['Saturday', 'Sunday'].includes(hour.day)
-                              ? { ...hour, enabled: checked }
-                              : hour
-                          )
-                        }));
-                      }}
-                    />
-                  </div>
-
-                  {/* Individual Day Toggles */}
-                  {profile.workingHours
-                    .filter(hours => {
-                      const isWeekendDay = ['Saturday', 'Sunday'].includes(hours.day);
-                      const weekendEnabled = profile.workingHours.filter(h => ['Saturday', 'Sunday'].includes(h.day)).some(h => h.enabled);
-                      return !isWeekendDay || weekendEnabled;
-                    })
-                    .map((hours) => (
-                    <div key={hours.day} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <div className="w-24">
-                        <Label className="text-sm font-medium">{hours.day}</Label>
+                {/* Notification Preferences */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Bell className="h-5 w-5" />
+                      Notification Preferences
+                    </CardTitle>
+                    <CardDescription>
+                      Choose how you want to be notified
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Email Notifications</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receive notifications via email
+                        </p>
                       </div>
                       <Switch
-                        checked={hours.enabled}
-                        onCheckedChange={(checked) => updateWorkingHours(hours.day, 'enabled', checked)}
+                        checked={profile.emailNotifications}
+                        onCheckedChange={(checked) => updateProfile('emailNotifications', checked)}
                       />
-                      {hours.enabled && (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <Label className="text-sm">Start:</Label>
-                            <Input
-                              type="time"
-                              value={hours.startTime}
-                              onChange={(e) => updateWorkingHours(hours.day, 'startTime', e.target.value)}
-                              className="w-32"
-                            />
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Label className="text-sm">End:</Label>
-                            <Input
-                              type="time"
-                              value={hours.endTime}
-                              onChange={(e) => updateWorkingHours(hours.day, 'endTime', e.target.value)}
-                              className="w-32"
-                            />
-                          </div>
-                        </>
-                      )}
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
 
-              {/* Free Hours */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Free Hours
-                  </CardTitle>
-                  <CardDescription>
-                    Set specific times when you're available for consultations or meetings
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button onClick={addFreeHour} variant="outline">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Free Hour
-                  </Button>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>SMS Notifications</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receive notifications via SMS
+                        </p>
+                      </div>
+                      <Switch
+                        checked={profile.smsNotifications}
+                        onCheckedChange={(checked) => updateProfile('smsNotifications', checked)}
+                      />
+                    </div>
 
-                  {profile.freeHours.map((hours) => (
-                    <div key={hours.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <Select value={hours.day} onValueChange={(value) => updateFreeHour(hours.id, 'day', value)}>
-                        <SelectTrigger className="w-32">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Session Reminders</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Get reminded about upcoming sessions
+                        </p>
+                      </div>
+                      <Switch
+                        checked={profile.sessionReminders}
+                        onCheckedChange={(checked) => updateProfile('sessionReminders', checked)}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Progress Updates</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receive updates on learner progress
+                        </p>
+                      </div>
+                      <Switch
+                        checked={profile.progressUpdates}
+                        onCheckedChange={(checked) => updateProfile('progressUpdates', checked)}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Privacy Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      Privacy Settings
+                    </CardTitle>
+                    <CardDescription>
+                      Control your privacy and data sharing preferences
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Profile Visibility</Label>
+                      <Select value={profile.profileVisibility} onValueChange={(value: any) => updateProfile('profileVisibility', value)}>
+                        <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {DAYS_OF_WEEK.map(day => (
-                            <SelectItem key={day} value={day}>{day}</SelectItem>
-                          ))}
+                          <SelectItem value="public">Public - Visible to all users</SelectItem>
+                          <SelectItem value="therapists-only">Therapists Only - Visible to other therapists</SelectItem>
+                          <SelectItem value="private">Private - Only visible to you</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
 
-                      <div className="flex items-center gap-2">
-                        <Label className="text-sm">Start:</Label>
-                        <Input
-                          type="time"
-                          value={hours.startTime}
-                          onChange={(e) => updateFreeHour(hours.id, 'startTime', e.target.value)}
-                          className="w-32"
-                        />
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Data Sharing</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Allow anonymized data sharing for research purposes
+                        </p>
                       </div>
-
-                      <div className="flex items-center gap-2">
-                        <Label className="text-sm">End:</Label>
-                        <Input
-                          type="time"
-                          value={hours.endTime}
-                          onChange={(e) => updateFreeHour(hours.id, 'endTime', e.target.value)}
-                          className="w-32"
-                        />
-                      </div>
-
-                      <Input
-                        value={hours.purpose}
-                        onChange={(e) => updateFreeHour(hours.id, 'purpose', e.target.value)}
-                        placeholder="Purpose (e.g., Consultation)"
-                        className="flex-1"
+                      <Switch
+                        checked={profile.dataSharing}
+                        onCheckedChange={(checked) => updateProfile('dataSharing', checked)}
                       />
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeFreeHour(hours.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Notification Preferences */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5" />
-                    Notification Preferences
-                  </CardTitle>
-                  <CardDescription>
-                    Choose how you want to be notified
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive notifications via email
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.emailNotifications}
-                      onCheckedChange={(checked) => updateProfile('emailNotifications', checked)}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>SMS Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive notifications via SMS
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.smsNotifications}
-                      onCheckedChange={(checked) => updateProfile('smsNotifications', checked)}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Session Reminders</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Get reminded about upcoming sessions
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.sessionReminders}
-                      onCheckedChange={(checked) => updateProfile('sessionReminders', checked)}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Progress Updates</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive updates on learner progress
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.progressUpdates}
-                      onCheckedChange={(checked) => updateProfile('progressUpdates', checked)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Privacy Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Privacy Settings
-                  </CardTitle>
-                  <CardDescription>
-                    Control your privacy and data sharing preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Profile Visibility</Label>
-                    <Select value={profile.profileVisibility} onValueChange={(value: any) => updateProfile('profileVisibility', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="public">Public - Visible to all users</SelectItem>
-                        <SelectItem value="therapists-only">Therapists Only - Visible to other therapists</SelectItem>
-                        <SelectItem value="private">Private - Only visible to you</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Data Sharing</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Allow anonymized data sharing for research purposes
-                      </p>
-                    </div>
-                    <Switch
-                      checked={profile.dataSharing}
-                      onCheckedChange={(checked) => updateProfile('dataSharing', checked)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           )}
         </motion.div>
       </div>

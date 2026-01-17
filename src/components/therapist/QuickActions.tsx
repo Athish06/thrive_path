@@ -9,6 +9,7 @@ import { LearnerTypeSelectionModal } from '../sessions/LearnerTypeSelectionModal
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
+import { API_BASE_URL } from '../../config/api';
 
 interface QuickActionsProps {
   // No props needed currently - notes functionality moved to calendar
@@ -23,7 +24,7 @@ export const QuickActions: React.FC<QuickActionsProps> = () => {
   const [showLearnerTypeModal, setShowLearnerTypeModal] = useState(false);
   const [showSessionModal, setShowSessionModal] = useState(false);
   const [selectedLearnerType, setSelectedLearnerType] = useState<'general' | 'temporary' | null>(null);
-  
+
   useEffect(() => {
     if (appTheme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -61,7 +62,7 @@ export const QuickActions: React.FC<QuickActionsProps> = () => {
       const token = localStorage.getItem('access_token');
       const studentList = selectedLearnerType === 'temporary' ? tempStudents : myStudents;
       const selectedLearner = studentList.find((student: any) => student.name === sessionData.learner);
-      
+
       if (!selectedLearner) {
         console.error('Selected learner not found');
         return;
@@ -90,7 +91,7 @@ export const QuickActions: React.FC<QuickActionsProps> = () => {
 
       console.log('Creating session with data:', backendData);
 
-      const response = await fetch('http://localhost:8000/api/sessions', {
+      const response = await fetch(`${API_BASE_URL}/api/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,10 +147,10 @@ export const QuickActions: React.FC<QuickActionsProps> = () => {
                   <button className="group p-3 rounded-full transition-all duration-200 hover:scale-105 relative">
                     {/* Simple hover background */}
                     <div className="absolute inset-0 rounded-full bg-slate-100/50 dark:bg-slate-800/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                    
+
                     {/* Light border on hover */}
                     <div className="absolute inset-0 rounded-full border border-transparent group-hover:border-slate-300/50 dark:group-hover:border-slate-600/50 transition-colors duration-200" />
-                    
+
                     {/* Icon */}
                     <div className="relative z-10">
                       <ConcentricCircleIcon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-200" />
